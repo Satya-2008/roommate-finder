@@ -4,12 +4,12 @@ const weights = {
   noise: 12,
   study: 20,
   social: 20,
-  branch: 10,
+  branch: 20,
   year: 0,
-  district: 4,
+  district: 5,
   foodtype: 10,
   sidepreference: 10,
-  futuretargets: 10,
+  futuretargets: 20,
   mostimportanttrait: 20,
   // NOTE: gender is NOT scored here — it's a hard filter in findMatches(),
   // not a soft-weighted trait. Every student left after the filter would
@@ -342,15 +342,60 @@ export function getMatchReasons(user, student) {
   };
 }
 
+// Maps a student's branch to their hostel — used as a hard filter so
+// students only ever match with people they could actually room with.
+//
+// Production & Industrial students are split across Hostel 1 and
+// Hostel 2 by roll number, but roll numbers don't exist yet at
+// signup time. Until that data exists, all Production students are
+// grouped into their own bucket so they only match each other —
+// avoids falsely matching them with Hostel 1/2 students they might
+// not actually end up living with.
+function getHostel(branch) {
+  const hostel1 = [
+    "Computer Science & Engineering (CSE)",
+    "Computer Science & Engineering – Cyber Security",
+    "Electronics & Communication Engineering (ECE)",
+    "Electrical Engineering (EE)",
+  ];
+
+  const hostel2 = [
+    "Chemical Engineering",
+    "Mining Engineering",
+    "Information Technology (IT)",
+  ];
+
+  const hostel3 = [
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Metallurgical Engineering",
+  ];
+
+  if (branch === "Production & Industrial Engineering") {
+    return "Production (hostel TBD)";
+  }
+
+  if (hostel1.includes(branch)) return "Hostel 1";
+  if (hostel2.includes(branch)) return "Hostel 2";
+  if (hostel3.includes(branch)) return "Hostel 3";
+
+  // Unrecognized/blank branch — keep isolated rather than guessing,
+  // so it doesn't accidentally get grouped with a real hostel.
+  return "Unknown hostel";
+}
+
 export function findMatches(user, students) {
-  // Hard filter: only ever compare students of the same gender.
-  // This is intentionally NOT a weighted trait (see note on `weights` above) —
-  // opposite-gender students should never appear, not just score lower.
-  const sameGenderStudents = students.filter(
-    (student) => student.gender === user.gender
+  // Hard filters: only ever compare students of the same gender AND
+  // the same hostel. Neither is a weighted trait — a wrong gender or
+  // wrong hostel means the match is impossible in practice, not just
+  // less compatible.
+  const eligibleStudents = students.filter(
+    (student) =>
+      student.gender === user.gender &&
+      getHostel(student.branch) === getHostel(user.branch)
   );
 
-  return sameGenderStudents
+  return eligibleStudents
     .map((student) => {
       const compatibility = calculateCompatibility(user, student);
       const reasons = getMatchReasons(user, student);
