@@ -17,6 +17,7 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
     sidepreference: [],
     futuretargets: "",
     mostimportanttrait: [],
+    specificPreference: "",
     // Spread last, so any previously saved answers (when editing an
     // existing profile) override these blank defaults.
     ...initialData,
@@ -350,6 +351,23 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
               "shared some sense of humour",
             ]}
           />
+
+          <div className="question">
+            <h3>Anything specific you're looking for? (optional)</h3>
+            <p className="question-hint">
+              This is shown directly on your match cards — not used in
+              scoring, just a way to flag a specific ask (e.g. "looking for chatting buddy", "looking for someone in the badminton
+              club").
+            </p>
+            <textarea
+              className="specific-preference-input"
+              placeholder="e.g. Looking for someone who's also into badminton and doesn't mind an early alarm..."
+              value={form.specificPreference}
+              onChange={(e) => update("specificPreference", e.target.value)}
+              rows={3}
+              maxLength={200}
+            />
+          </div>
 
         </section>
 

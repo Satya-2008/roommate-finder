@@ -118,6 +118,16 @@ function Matches({ matches, onBack, currentUser }) {
 
             </div>
 
+            {student.specificPreference && (
+              <div className="specific-ask">
+                <span className="specific-ask-label">💬 Looking for</span>
+                <p>{student.specificPreference}</p>
+                <span className="specific-ask-note">
+                  If you can meet this, reach out!
+                </span>
+              </div>
+            )}
+
             {student.email && (
               <div className="contact">
                 <button

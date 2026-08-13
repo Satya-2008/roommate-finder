@@ -209,6 +209,36 @@
   color: #4ADE80;
 }
 
+.question-hint {
+  margin: -6px 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6a6a6a;
+}
+
+.specific-preference-input {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #ffffff;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.specific-preference-input::placeholder {
+  color: #5a5a5a;
+}
+
+.specific-preference-input:focus {
+  border-color: #4ADE80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+}
+
 /* ---------- Submit ---------- */
 
 .submit-button {

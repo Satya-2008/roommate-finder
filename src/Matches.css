@@ -218,6 +218,39 @@
   color: #e0a94a;
 }
 
+/* ---------- Specific ask ---------- */
+
+.specific-ask {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: rgba(129, 140, 248, 0.08);
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  border-radius: 12px;
+}
+
+.specific-ask-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #a5adf7;
+  margin-bottom: 6px;
+}
+
+.specific-ask p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e5e7ff;
+}
+
+.specific-ask-note {
+  font-size: 12px;
+  color: #7d86c9;
+}
+
 /* ---------- Contact ---------- */
 
 .contact {
