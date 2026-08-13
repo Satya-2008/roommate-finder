@@ -1,15 +1,15 @@
 const weights = {
-  sleep: 25,
-  cleanliness: 20,
-  noise: 10,
+  sleep: 20,
+  cleanliness: 18,
+  noise: 12,
   study: 10,
   social: 20,
   branch: 50,
   district: 50,
   foodtype: 10,
-  sidepreference: 10,
-  futuretargets: 10,
-  mostimportanttrait: 20,
+  sidepreference: 4,
+  futuretargets: 3,
+  mostimportanttrait: 10,
   // NOTE: gender is NOT scored here — it's a hard filter in findMatches(),
   // not a soft-weighted trait. Every student left after the filter would
   // score a perfect 1 on gender anyway, so weighting it would be pointless.
