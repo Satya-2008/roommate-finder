@@ -14,9 +14,9 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
     study: "",
     social: "",
     foodtype: "",
-    sidepreference: "",
+    sidepreference: [],
     futuretargets: "",
-    mostimportanttrait: "",
+    mostimportanttrait: [],
     // Spread last, so any previously saved answers (when editing an
     // existing profile) override these blank defaults.
     ...initialData,
@@ -29,7 +29,64 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
     });
   }
 
+  // For multi-select questions — adds/removes an option from the
+  // array instead of replacing a single value.
+  function toggleMulti(field, option) {
+    const current = form[field] || [];
+    const updated = current.includes(option)
+      ? current.filter((v) => v !== option)
+      : [...current, option];
+    update(field, updated);
+  }
+
+  const [error, setError] = useState("");
+
+  // The submit button is type="button" (not type="submit"), so the
+  // `required` attributes on inputs/selects never actually trigger
+  // browser validation — this function is the real gatekeeper.
+  function validate() {
+    const singleValueFields = [
+      "name",
+      "gender",
+      "branch",
+      "year",
+      "district",
+      "sleep",
+      "cleanliness",
+      "noise",
+      "study",
+      "social",
+      "foodtype",
+      "futuretargets",
+    ];
+
+    for (const field of singleValueFields) {
+      const value = form[field];
+      if (!value || value.toString().trim() === "") {
+        return "Please answer every question before finding your matches.";
+      }
+    }
+
+    if (!form.sidepreference || form.sidepreference.length === 0) {
+      return "Please select at least one side preference.";
+    }
+
+    if (!form.mostimportanttrait || form.mostimportanttrait.length === 0) {
+      return "Please select at least one important trait.";
+    }
+
+    return "";
+  }
+
   function handleSubmit() {
+    const validationError = validate();
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError("");
     console.log("Sending profile:", form);
     onSubmit(form);
   }
@@ -127,6 +184,21 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
             <option>Metallurgical Engineering</option>
             <option>Mining Engineering</option>
             <option>Production & Industrial Engineering</option>
+          </select>
+
+
+          <label>Year</label>
+
+          <select
+            value={form.year}
+            onChange={(e) => update("year", e.target.value)}
+            required
+          >
+            <option value="">Select year</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+            <option>4th Year</option>
           </select>
 
 
@@ -244,17 +316,17 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
             ]}
           />  
 
-          <Question
-            title = "Side preference?"
-            value={form.sidepreference}
-            update = {(value) => update("sidepreference", value)}
+          <MultiQuestion
+            title="Side preference? (select all that apply)"
+            values={form.sidepreference || []}
+            toggle={(option) => toggleMulti("sidepreference", option)}
             options={[
               "Gaming",
               "sports & fitness",
               "Music",
               "Reading",
             ]}
-            />
+          />
 
             <Question
             title ="Future targets?"
@@ -267,20 +339,21 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
             ]}
             />
 
-            <Question
-            title="Most Important trait you look for in a roommate?"
-            value={form.mostimportanttrait}
-            update = {(value) => update("mostimportanttrait", value)}
+          <MultiQuestion
+            title="Most important traits you look for in a roommate? (select all that apply)"
+            values={form.mostimportanttrait || []}
+            toggle={(option) => toggleMulti("mostimportanttrait", option)}
             options={[
               "respectful of privacy",
               "good communication",
               "similar study goals",
               "shared some sense of humour",
             ]}
-            />
+          />
 
         </section>
 
+        {error && <p className="form-error">{error}</p>}
 
        <button
           className="submit-button"
@@ -319,6 +392,42 @@ function Question({
                 : "option"
             }
             onClick={() => update(option)}
+          >
+            {option}
+          </button>
+        ))}
+
+      </div>
+
+    </div>
+  );
+}
+
+// Same visual pattern as Question, but supports selecting more than
+// one option at once — `values` is an array, `toggle` adds/removes.
+function MultiQuestion({
+  title,
+  options,
+  values,
+  toggle,
+}) {
+  return (
+    <div className="question">
+
+      <h3>{title}</h3>
+
+      <div className="options">
+
+        {options.map((option) => (
+          <button
+            type="button"
+            key={option}
+            className={
+              values.includes(option)
+                ? "option selected"
+                : "option"
+            }
+            onClick={() => toggle(option)}
           >
             {option}
           </button>

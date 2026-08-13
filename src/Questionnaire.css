@@ -151,6 +151,18 @@
   color: #ffffff;
 }
 
+.form-error {
+  max-width: 640px;
+  margin: 0 auto 16px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #ef4444;
+  text-align: center;
+}
+
 /* ---------- Question blocks ---------- */
 
 .question {

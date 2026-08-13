@@ -1,15 +1,16 @@
 const weights = {
   sleep: 20,
-  cleanliness: 18,
+  cleanliness: 20,
   noise: 12,
-  study: 10,
+  study: 20,
   social: 20,
-  branch: 50,
-  district: 50,
+  branch: 10,
+  year: 0,
+  district: 4,
   foodtype: 10,
-  sidepreference: 4,
-  futuretargets: 3,
-  mostimportanttrait: 10,
+  sidepreference: 10,
+  futuretargets: 10,
+  mostimportanttrait: 20,
   // NOTE: gender is NOT scored here — it's a hard filter in findMatches(),
   // not a soft-weighted trait. Every student left after the filter would
   // score a perfect 1 on gender anyway, so weighting it would be pointless.
@@ -167,6 +168,10 @@ const similarity = {
     },
   },
 
+  // NOTE: sidepreference and mostimportanttrait are now multi-select
+  // (arrays), so this lookup table is no longer used for them — see
+  // arraySimilarity() below, which getSimilarity() routes array values
+  // through automatically. Left here only for reference/rollback.
   sidepreference: {
     "Gaming": {
       "Gaming": 1,
@@ -240,7 +245,35 @@ const similarity = {
   },
 };
 
+// Similarity for multi-select traits (arrays of chosen options) —
+// Jaccard index: how much the two sets of picks overlap, relative to
+// everything either person picked. 1 = identical picks, 0 = no overlap.
+function arraySimilarity(a, b) {
+  if (
+    !Array.isArray(a) ||
+    !Array.isArray(b) ||
+    a.length === 0 ||
+    b.length === 0
+  ) {
+    return 0.5;
+  }
+
+  const setA = new Set(a);
+  const setB = new Set(b);
+  const intersection = [...setA].filter((x) => setB.has(x)).length;
+  const union = new Set([...setA, ...setB]).size;
+
+  return intersection / union;
+}
+
 function getSimilarity(trait, userValue, studentValue) {
+  // Multi-select traits (sidepreference, mostimportanttrait) are
+  // arrays — route those through Jaccard similarity instead of the
+  // single-value lookup tables above.
+  if (Array.isArray(userValue) || Array.isArray(studentValue)) {
+    return arraySimilarity(userValue, studentValue);
+  }
+
   if (!userValue || !studentValue) {
     return 0.5;
   }
@@ -264,7 +297,7 @@ export function calculateCompatibility(user, student) {
     const weight = weights[trait];
 
     const similarityScore =
-      trait === "branch"
+      trait === "branch" || trait === "year"
         ? user[trait] === student[trait]
           ? 1
           : 0.5
