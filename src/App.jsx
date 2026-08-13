@@ -217,9 +217,9 @@ function App() {
     return <Credits onBack={() => setPage("home")} />;
   }
 
-  if (page === "Feedback") {
+  if (page === "feedback") {
     return (
-      <Feedback
+      <feedback
         currentUser={{ uid: user.uid, email: user.email, name: myProfile?.name }}
         onBack={() => setPage("home")}
       />
