@@ -1,0 +1,455 @@
+/* ==========================================================================
+   RoomMate — Matches
+   Same token system as Questionnaire.css:
+   bg #0a0a0a · surface #141414 · border #262626
+   text #ffffff · text-secondary #8a8a8a · accent #4ADE80
+   ========================================================================== */
+
+.matches {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #ffffff;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 64px 24px 96px;
+}
+
+/* ---------- Header ---------- */
+
+.matches-header {
+  max-width: 640px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+
+.matches-header .tag {
+  display: inline-block;
+  margin: 0 0 20px;
+  padding: 6px 14px;
+  border: 1px solid #262626;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+}
+
+.matches-header h1 {
+  margin: 0 0 16px;
+  font-size: 44px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.matches-header h1 span {
+  color: #7a7a7a;
+}
+
+.matches-header > p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #8a8a8a;
+}
+
+/* ---------- Results list ---------- */
+
+.results {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Student card ---------- */
+
+.student-card {
+  position: relative;
+  background: #111111;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 28px 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 8px 20px;
+  transition: border-color 0.15s ease;
+}
+
+.student-card:hover {
+  border-color: #333333;
+}
+
+/* A mutual match gets a distinct border so it stands out in the list
+   without needing the person to read every card's reasons section. */
+.student-card:has(.mutual-badge) {
+  border-color: #4ADE80;
+}
+
+.mutual-badge {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-self: start;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid #4ADE80;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4ADE80;
+  width: fit-content;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #8a8a8a;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.student-details {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid #4ADE80;
+  color: #4ADE80;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-details h2 {
+  margin: 0 0 2px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.student-details p {
+  margin: 0;
+  font-size: 14px;
+  color: #b5b5b5;
+}
+
+.student-details small {
+  font-size: 12px;
+  color: #6a6a6a;
+}
+
+/* ---------- Score ---------- */
+
+.score {
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.score strong {
+  font-size: 26px;
+  font-weight: 800;
+  color: #4ADE80;
+  line-height: 1.1;
+}
+
+.score span {
+  font-size: 12px;
+  color: #6a6a6a;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Reasons ---------- */
+
+.reasons {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #1f1f1f;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+}
+
+.reasons h4 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+}
+
+.reasons > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.reasons span {
+  font-size: 13px;
+  color: #cfcfcf;
+}
+
+.reasons > div:first-of-type span {
+  color: #4ADE80;
+}
+
+.reasons > div:last-of-type span {
+  color: #e0a94a;
+}
+
+/* ---------- Contact ---------- */
+
+.contact {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #1f1f1f;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.contact-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #4ADE80;
+  color: #4ADE80;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.contact-button:hover {
+  background: rgba(74, 222, 128, 0.12);
+}
+
+/* ---------- Reviews ---------- */
+
+.review-section {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #1f1f1f;
+}
+
+.review-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.review-average {
+  font-size: 14px;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.review-average.review-none {
+  font-weight: 500;
+  color: #6a6a6a;
+}
+
+.review-count {
+  font-size: 13px;
+  font-weight: 400;
+  color: #6a6a6a;
+}
+
+.review-toggle {
+  background: transparent;
+  border: 1px solid #262626;
+  color: #b5b5b5;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.review-toggle:hover {
+  border-color: #4a4a4a;
+  color: #ffffff;
+}
+
+.review-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.star-input {
+  display: flex;
+  gap: 4px;
+}
+
+.star-input .star {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #333333;
+  cursor: pointer;
+  padding: 2px;
+  transition: color 0.1s ease;
+}
+
+.star-input .star.filled {
+  color: #facc15;
+}
+
+.review-form textarea {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #ffffff;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.review-form textarea::placeholder {
+  color: #5a5a5a;
+}
+
+.review-form textarea:focus {
+  border-color: #4ADE80;
+}
+
+.review-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.review-cancel {
+  background: transparent;
+  border: 1px solid #262626;
+  color: #8a8a8a;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.review-cancel:hover:not(:disabled) {
+  color: #ffffff;
+}
+
+.review-submit {
+  background: #4ADE80;
+  border: none;
+  color: #0a0a0a;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.review-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Back button ---------- */
+
+.back-button {
+  align-self: center;
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid #262626;
+  color: #8a8a8a;
+  font-size: 14px;
+  font-family: inherit;
+  padding: 12px 24px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.back-button:hover {
+  border-color: #4a4a4a;
+  color: #ffffff;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .matches {
+    padding: 48px 16px 72px;
+  }
+
+  .matches-header h1 {
+    font-size: 32px;
+  }
+
+  .student-card {
+    padding: 22px 20px;
+    grid-template-columns: 1fr;
+  }
+
+  .score {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .reasons {
+    grid-column: 1;
+  }
+}
+
+/* ---------- Accessibility ---------- */
+
+.back-button:focus-visible {
+  outline: 2px solid #4ADE80;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-card,
+  .back-button {
+    transition: none;
+  }
+}

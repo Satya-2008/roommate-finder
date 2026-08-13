@@ -1,0 +1,414 @@
+/* ==========================================================================
+   RoomMate — App (landing page)
+   Same token system as Questionnaire.css / Matches.css:
+   bg #0a0a0a · surface #141414 · border #262626
+   text #ffffff · text-secondary #8a8a8a · accent #4ADE80
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #ffffff;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.logo span {
+  color: #7a7a7a;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-links a {
+  color: #b5b5b5;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s ease;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+}
+
+.nav-links .link-button {
+  background: none;
+  border: none;
+  color: #b5b5b5;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.nav-links .link-button:hover {
+  color: #ffffff;
+}
+
+.nav-links button {
+  background: #ffffff;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.nav-links button:hover {
+  background: #e6e6e6;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 48px 120px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.hero-text .tag {
+  display: inline-block;
+  margin: 0 0 28px;
+  padding: 6px 14px;
+  border: 1px solid #262626;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+}
+
+.hero-text h1 {
+  margin: 0 0 24px;
+  font-size: 64px;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.hero-text h1 span {
+  color: #6a6a6a;
+}
+
+.hero-text .description {
+  margin: 0 0 36px;
+  max-width: 440px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #8a8a8a;
+}
+
+.start-button {
+  background: #ffffff;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 28px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.start-button:hover {
+  background: #e6e6e6;
+  transform: translateY(-1px);
+}
+
+.start-button:active {
+  transform: translateY(0);
+}
+
+.start-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.edit-profile-button {
+  background: transparent;
+  border: 1px solid #262626;
+  color: #b5b5b5;
+  border-radius: 999px;
+  padding: 15px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.edit-profile-button:hover {
+  border-color: #4a4a4a;
+  color: #ffffff;
+}
+
+/* ---------- Match card ---------- */
+
+.match-card {
+  background: #111111;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 28px 32px;
+}
+
+.match-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #1f1f1f;
+}
+
+.match-title span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+}
+
+.match-title strong {
+  font-size: 26px;
+  font-weight: 800;
+  color: #4ADE80;
+}
+
+.trait {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a1a1a;
+  font-size: 14px;
+  color: #cfcfcf;
+}
+
+.trait:last-child {
+  border-bottom: none;
+}
+
+.trait b {
+  font-weight: 700;
+  color: #4ADE80;
+}
+
+.trait:last-child b {
+  color: #e0a94a;
+}
+
+/* ---------- How it works ---------- */
+
+.how {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px 120px;
+  border-top: 1px solid #1a1a1a;
+  padding-top: 96px;
+}
+
+.how .tag {
+  display: inline-block;
+  margin: 0 0 20px;
+  padding: 6px 14px;
+  border: 1px solid #262626;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+}
+
+.how h2 {
+  margin: 0 0 56px;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  max-width: 520px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.steps > div {
+  border-top: 1px solid #262626;
+  padding-top: 24px;
+}
+
+.steps span {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4ADE80;
+  font-variant-numeric: tabular-nums;
+}
+
+.steps h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.steps p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #8a8a8a;
+}
+
+/* ---------- Footer ---------- */
+
+.app-footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 48px 40px;
+  border-top: 1px solid #1a1a1a;
+  text-align: center;
+}
+
+.app-footer p {
+  margin: 0;
+  font-size: 13px;
+  color: #6a6a6a;
+}
+
+.app-footer a {
+  color: #4ADE80;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-link-button {
+  background: none;
+  border: none;
+  color: #6a6a6a;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.footer-link-button:hover {
+  color: #b5b5b5;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 48px 24px 80px;
+    gap: 48px;
+  }
+
+  .hero-text h1 {
+    font-size: 44px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .how {
+    padding: 64px 24px 80px;
+  }
+
+  .app-footer {
+    padding: 24px 20px 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    padding: 20px 20px;
+  }
+
+  .nav-links {
+    gap: 16px;
+  }
+
+  .nav-links a {
+    display: none;
+  }
+
+  .hero-text h1 {
+    font-size: 36px;
+  }
+
+  .hero-text .description {
+    max-width: none;
+  }
+}
+
+/* ---------- Accessibility ---------- */
+
+.nav-links a:focus-visible,
+.nav-links button:focus-visible,
+.start-button:focus-visible {
+  outline: 2px solid #4ADE80;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-button,
+  .nav-links button,
+  .nav-links a {
+    transition: none;
+  }
+}
