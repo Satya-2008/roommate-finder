@@ -1,0 +1,188 @@
+.roommate-found {
+  min-height: 100vh;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.roommate-found-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  padding: 48px 36px;
+  text-align: center;
+  box-shadow: var(--shadow-glow);
+  animation: bounceIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.roommate-found-emoji {
+  font-size: 48px;
+  margin: 0 0 16px;
+  animation: popScale 1.4s ease-in-out 0.6s infinite;
+}
+
+.roommate-found-card .tag {
+  display: inline-block;
+  margin: 0 0 20px;
+  padding: 6px 14px;
+  background: var(--grad-primary);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.roommate-found-card h1 {
+  margin: 0 0 32px;
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.roommate-found-card h1 span {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.partner-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.partner-avatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-preview h2 {
+  margin: 0 0 2px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.partner-preview p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.partner-preview small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.roommate-found-note {
+  margin: 0 0 28px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.roommate-found-card .submit-button {
+  width: 100%;
+  background: var(--grad-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.roommate-found-card .submit-button:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
+}
+
+.roommate-found-admin {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.roommate-found-admin p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.roommate-found-admin-links {
+  font-size: 12px;
+}
+
+.roommate-found-admin-links a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.roommate-found-admin-links a:hover {
+  text-decoration: underline;
+}
+
+.roommate-found-link-button {
+  background: none;
+  border: none;
+  color: var(--accent-cyan);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.roommate-found-link-button:hover {
+  text-decoration: underline;
+}
+
+.roommate-found-logout {
+  display: block;
+  margin: 16px auto 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.roommate-found-logout:hover {
+  color: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roommate-found-emoji {
+    animation: none;
+  }
+}

@@ -1,15 +1,8 @@
-/* ==========================================================================
-   RoomMate — Matches
-   Same token system as Questionnaire.css:
-   bg #0a0a0a · surface #141414 · border #262626
-   text #ffffff · text-secondary #8a8a8a · accent #4ADE80
-   ========================================================================== */
-
 .matches {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #ffffff;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
   padding: 64px 24px 96px;
 }
 
@@ -19,38 +12,43 @@
   max-width: 640px;
   margin: 0 auto 48px;
   text-align: center;
+  animation: fadeUp 0.5s ease both;
 }
 
 .matches-header .tag {
   display: inline-block;
   margin: 0 0 20px;
   padding: 6px 14px;
-  border: 1px solid #262626;
+  border: 1px solid var(--border-soft);
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8a8a;
+  color: var(--accent-cyan);
 }
 
 .matches-header h1 {
   margin: 0 0 16px;
+  font-family: var(--font-display);
   font-size: 44px;
   line-height: 1.1;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .matches-header h1 span {
-  color: #7a7a7a;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .matches-header > p {
   margin: 0;
   font-size: 16px;
   line-height: 1.6;
-  color: #8a8a8a;
+  color: var(--text-secondary);
 }
 
 /* ---------- Results list ---------- */
@@ -67,25 +65,33 @@
 
 .student-card {
   position: relative;
-  background: #111111;
-  border: 1px solid #1f1f1f;
-  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 20px;
   padding: 28px 32px;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: start;
   gap: 8px 20px;
-  transition: border-color 0.15s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  animation: fadeUp 0.5s ease both;
 }
 
 .student-card:hover {
-  border-color: #333333;
+  border-color: var(--border-soft-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
 
-/* A mutual match gets a distinct border so it stands out in the list
-   without needing the person to read every card's reasons section. */
+/* A mutual match gets a glowing gradient border so it stands out
+   in the list without needing the person to read every card. */
+
 .student-card:has(.mutual-badge) {
-  border-color: #4ADE80;
+  border-color: var(--accent-pink);
+  box-shadow: var(--shadow-glow-pink);
 }
 
 .mutual-badge {
@@ -95,20 +101,22 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 16px;
-  padding: 6px 12px;
-  background: rgba(74, 222, 128, 0.12);
-  border: 1px solid #4ADE80;
+  padding: 6px 14px;
+  background: var(--grad-primary);
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
-  color: #4ADE80;
+  color: #ffffff;
   width: fit-content;
+  animation:
+    popScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    pulseGlow 2.6s ease-in-out 0.6s infinite;
 }
 
 .empty-state {
   text-align: center;
   padding: 48px 24px;
-  color: #8a8a8a;
+  color: var(--text-secondary);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -125,9 +133,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(74, 222, 128, 0.12);
-  border: 1px solid #4ADE80;
-  color: #4ADE80;
+  background: var(--grad-primary);
+  color: #ffffff;
   font-size: 18px;
   font-weight: 700;
   display: flex;
@@ -144,12 +151,12 @@
 .student-details p {
   margin: 0;
   font-size: 14px;
-  color: #b5b5b5;
+  color: var(--text-secondary);
 }
 
 .student-details small {
   font-size: 12px;
-  color: #6a6a6a;
+  color: var(--text-muted);
 }
 
 /* ---------- Score ---------- */
@@ -164,15 +171,19 @@
 }
 
 .score strong {
-  font-size: 26px;
-  font-weight: 800;
-  color: #4ADE80;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   line-height: 1.1;
 }
 
 .score span {
   font-size: 12px;
-  color: #6a6a6a;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -183,10 +194,18 @@
   grid-column: 1 / -1;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #1f1f1f;
-  display: flex;
-  flex-wrap: wrap;
+  border-top: 1px solid var(--border-soft);
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 28px;
+}
+
+.reasons > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
 .reasons h4 {
@@ -195,27 +214,24 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #6a6a6a;
-}
-
-.reasons > div {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 160px;
+  color: var(--text-muted);
 }
 
 .reasons span {
   font-size: 13px;
-  color: #cfcfcf;
+  overflow-wrap: anywhere;
 }
 
-.reasons > div:first-of-type span {
-  color: #4ADE80;
+/* ---------- FIXED COLOURS ---------- */
+
+/* Good matches are ALWAYS green */
+.reasons .good-reasons span {
+  color: var(--accent-green);
 }
 
-.reasons > div:last-of-type span {
-  color: #e0a94a;
+/* Differences are ALWAYS amber */
+.reasons .difference-reasons span {
+  color: var(--accent-amber);
 }
 
 /* ---------- Specific ask ---------- */
@@ -224,9 +240,9 @@
   grid-column: 1 / -1;
   margin-top: 16px;
   padding: 16px 18px;
-  background: rgba(129, 140, 248, 0.08);
-  border: 1px solid rgba(129, 140, 248, 0.35);
-  border-radius: 12px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 14px;
 }
 
 .specific-ask-label {
@@ -235,7 +251,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #a5adf7;
+  color: var(--accent-violet);
   margin-bottom: 6px;
 }
 
@@ -243,21 +259,21 @@
   margin: 0 0 8px;
   font-size: 14px;
   line-height: 1.6;
-  color: #e5e7ff;
+  color: var(--text-primary);
 }
 
 .specific-ask-note {
   font-size: 12px;
-  color: #7d86c9;
+  color: var(--text-secondary);
 }
 
-/* ---------- Contact ---------- */
+/* ---------- Contact (legacy) ---------- */
 
 .contact {
   grid-column: 1 / -1;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #1f1f1f;
+  border-top: 1px solid var(--border-soft);
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -268,18 +284,126 @@
   align-items: center;
   gap: 8px;
   background: transparent;
-  border: 1px solid #4ADE80;
-  color: #4ADE80;
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   padding: 10px 18px;
   border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
 }
 
 .contact-button:hover {
-  background: rgba(74, 222, 128, 0.12);
+  background: rgba(34, 211, 238, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ---------- Interest / chat unlock ---------- */
+
+.interest-section {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.interest-loading {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.interest-error {
+  font-size: 13px;
+  color: var(--accent-red);
+}
+
+.interest-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.interest-button:hover:not(:disabled) {
+  background: rgba(34, 211, 238, 0.12);
+  transform: translateY(-1px);
+}
+
+.interest-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.interest-note {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-amber);
+}
+
+.interest-waiting-note {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.interest-withdraw-button {
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.interest-withdraw-button:hover:not(:disabled) {
+  color: var(--accent-red);
+  border-color: var(--accent-red);
+}
+
+.interest-mutual-note {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-pink);
+}
+
+.chat-unlock-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--grad-primary);
+  border: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}
+
+.chat-unlock-button:hover {
+  transform: translateY(-1px) scale(1.02);
 }
 
 /* ---------- Reviews ---------- */
@@ -288,7 +412,7 @@
   grid-column: 1 / -1;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #1f1f1f;
+  border-top: 1px solid var(--border-soft);
 }
 
 .review-summary {
@@ -302,36 +426,38 @@
 .review-average {
   font-size: 14px;
   font-weight: 700;
-  color: #facc15;
+  color: var(--accent-amber);
 }
 
 .review-average.review-none {
   font-weight: 500;
-  color: #6a6a6a;
+  color: var(--text-muted);
 }
 
 .review-count {
   font-size: 13px;
   font-weight: 400;
-  color: #6a6a6a;
+  color: var(--text-muted);
 }
 
 .review-toggle {
   background: transparent;
-  border: 1px solid #262626;
-  color: #b5b5b5;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
   padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .review-toggle:hover {
-  border-color: #4a4a4a;
-  color: #ffffff;
+  border-color: var(--border-soft-hover);
+  color: var(--text-primary);
 }
 
 .review-form {
@@ -351,36 +477,42 @@
   border: none;
   font-size: 24px;
   line-height: 1;
-  color: #333333;
+  color: var(--border-soft);
   cursor: pointer;
   padding: 2px;
-  transition: color 0.1s ease;
+  transition:
+    color 0.1s ease,
+    transform 0.1s ease;
+}
+
+.star-input .star:hover {
+  transform: scale(1.15);
 }
 
 .star-input .star.filled {
-  color: #facc15;
+  color: var(--accent-amber);
 }
 
 .review-form textarea {
   width: 100%;
-  background: #0a0a0a;
-  border: 1px solid #262626;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 14px;
   font-family: inherit;
-  color: #ffffff;
+  color: var(--text-primary);
   resize: vertical;
   outline: none;
   transition: border-color 0.15s ease;
 }
 
 .review-form textarea::placeholder {
-  color: #5a5a5a;
+  color: var(--text-muted);
 }
 
 .review-form textarea:focus {
-  border-color: #4ADE80;
+  border-color: var(--accent-violet);
 }
 
 .review-form-actions {
@@ -391,8 +523,8 @@
 
 .review-cancel {
   background: transparent;
-  border: 1px solid #262626;
-  color: #8a8a8a;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   font-size: 13px;
   font-family: inherit;
   padding: 8px 16px;
@@ -401,13 +533,13 @@
 }
 
 .review-cancel:hover:not(:disabled) {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .review-submit {
-  background: #4ADE80;
+  background: var(--grad-primary);
   border: none;
-  color: #0a0a0a;
+  color: #ffffff;
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
@@ -428,24 +560,27 @@
   align-self: center;
   margin-top: 12px;
   background: transparent;
-  border: 1px solid #262626;
-  color: #8a8a8a;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   font-size: 14px;
   font-family: inherit;
   padding: 12px 24px;
   border-radius: 999px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .back-button:hover {
-  border-color: #4a4a4a;
-  color: #ffffff;
+  border-color: var(--border-soft-hover);
+  color: var(--text-primary);
 }
 
 /* ---------- Responsive ---------- */
 
 @media (max-width: 640px) {
+
   .matches {
     padding: 48px 16px 72px;
   }
@@ -470,19 +605,25 @@
 
   .reasons {
     grid-column: 1;
+    grid-template-columns: 1fr;
   }
+
 }
 
 /* ---------- Accessibility ---------- */
 
 .back-button:focus-visible {
-  outline: 2px solid #4ADE80;
+  outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .student-card,
-  .back-button {
-    transition: none;
+  .back-button,
+  .mutual-badge,
+  .chat-unlock-button {
+    animation: none;
   }
+
 }

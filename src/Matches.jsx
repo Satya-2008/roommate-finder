@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import "./Matches.css";
-import { submitReview, getReviewsForUser, averageRating } from "./reviews";
+import {
+  submitReview,
+  getReviewsForUser,
+  averageRating,
+} from "./reviews";
+import {
+  expressInterest,
+  withdrawInterest,
+  getInterestStatus,
+  getChatId,
+} from "./interestApi";
 
 // Student peer-review system — built, working, but hidden for now.
 // Flip to true to bring it back without rewriting anything.
@@ -17,9 +27,9 @@ async function copyEmail(email) {
   }
 }
 
-function Matches({ matches, onBack, currentUser }) {
+function Matches({ matches, onBack, currentUser, onOpenChat }) {
   return (
-    <div className="matches">
+    <div className="matches aurora-bg">
 
       <header className="matches-header">
 
@@ -38,7 +48,6 @@ function Matches({ matches, onBack, currentUser }) {
         </p>
 
       </header>
-
 
       <main className="results">
 
@@ -75,7 +84,6 @@ function Matches({ matches, onBack, currentUser }) {
 
             </div>
 
-
             <div className="score">
 
               <strong>
@@ -88,11 +96,10 @@ function Matches({ matches, onBack, currentUser }) {
 
             </div>
 
-
             <div className="reasons">
 
               {student.reasons.good.length > 0 && (
-                <div>
+                <div className="good-reasons">
                   <h4>Good match</h4>
 
                   {student.reasons.good.map((trait) => (
@@ -103,9 +110,8 @@ function Matches({ matches, onBack, currentUser }) {
                 </div>
               )}
 
-
               {student.reasons.differences.length > 0 && (
-                <div>
+                <div className="difference-reasons">
                   <h4>Potential differences</h4>
 
                   {student.reasons.differences.map((trait) => (
@@ -120,49 +126,34 @@ function Matches({ matches, onBack, currentUser }) {
 
             {student.specificPreference && (
               <div className="specific-ask">
-                <span className="specific-ask-label">💬 Looking for</span>
+                <span className="specific-ask-label">
+                  💬 Looking for
+                </span>
+
                 <p>{student.specificPreference}</p>
+
                 <span className="specific-ask-note">
                   If you can meet this, reach out!
                 </span>
               </div>
             )}
 
-            {student.email && (
-              <div className="contact">
-                <button
-                  type="button"
-                  className="contact-button"
-                  onClick={() => copyEmail(student.email)}
-                >
-                  ⧉ Copy email
-                </button>
-
-                <a
-                  className="contact-button"
-                  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
-                    student.email
-                  )}&su=${encodeURIComponent(
-                    "Roommate match on RoomMate"
-                  )}&body=${encodeURIComponent(
-                    `Hi ${student.name},\n\nWe matched at ${student.compatibility}% compatibility on RoomMate. Want to connect and see if we'd be a good fit as roommates?\n\n`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  ✉ Open in Gmail
-                </a>
-              </div>
-            )}
+            <InterestSection
+              student={student}
+              currentUser={currentUser}
+              onOpenChat={onOpenChat}
+            />
 
             {STUDENT_REVIEWS_ENABLED && (
-              <ReviewSection student={student} currentUser={currentUser} />
+              <ReviewSection
+                student={student}
+                currentUser={currentUser}
+              />
             )}
 
           </div>
 
         ))}
-
 
         <button
           className="back-button"
@@ -177,10 +168,229 @@ function Matches({ matches, onBack, currentUser }) {
   );
 }
 
+
+// Handles the opt-in flow: tap "I'm interested", and once the other
+// person has also expressed interest in you, a chat unlocks between
+// just the two of you. Replaces exposing contact info to everyone.
+
+function InterestSection({ student, currentUser, onOpenChat }) {
+
+  const [status, setStatus] = useState(null);
+  const [loadError, setLoadError] = useState(false);
+  const [working, setWorking] = useState(false);
+
+  useEffect(() => {
+
+    let cancelled = false;
+
+    getInterestStatus(currentUser.uid, student.uid)
+      .then((result) => {
+        if (!cancelled) setStatus(result);
+      })
+      .catch((err) => {
+        console.error("Failed to load interest status:", err);
+
+        if (!cancelled) setLoadError(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+
+  }, [currentUser.uid, student.uid]);
+
+
+  async function handleExpressInterest() {
+
+    setWorking(true);
+
+    try {
+
+      await expressInterest(
+        currentUser.uid,
+        student.uid
+      );
+
+      const updated = await getInterestStatus(
+        currentUser.uid,
+        student.uid
+      );
+
+      setStatus(updated);
+
+    } catch (err) {
+
+      console.error(
+        "Failed to express interest:",
+        err
+      );
+
+    } finally {
+
+      setWorking(false);
+
+    }
+  }
+
+
+  async function handleWithdraw() {
+
+    setWorking(true);
+
+    try {
+
+      await withdrawInterest(
+        currentUser.uid,
+        student.uid
+      );
+
+      const updated = await getInterestStatus(
+        currentUser.uid,
+        student.uid
+      );
+
+      setStatus(updated);
+
+    } catch (err) {
+
+      console.error(
+        "Failed to withdraw interest:",
+        err
+      );
+
+    } finally {
+
+      setWorking(false);
+
+    }
+  }
+
+
+  function handleChat() {
+
+    const chatId = getChatId(
+      currentUser.uid,
+      student.uid
+    );
+
+    onOpenChat({
+      chatId,
+      otherUser: {
+        uid: student.uid,
+        name: student.name,
+      },
+    });
+
+  }
+
+
+  if (loadError) {
+
+    return (
+      <div className="interest-section">
+
+        <span className="interest-error">
+          Couldn't load interest status. Try refreshing.
+        </span>
+
+      </div>
+    );
+
+  }
+
+
+  if (status === null) {
+
+    return (
+      <div className="interest-section">
+
+        <span className="interest-loading">
+          Loading...
+        </span>
+
+      </div>
+    );
+
+  }
+
+
+  if (status.isMutual) {
+
+    return (
+      <div className="interest-section">
+
+        <span className="interest-mutual-note">
+          You're both interested!
+        </span>
+
+        <button
+          type="button"
+          className="chat-unlock-button"
+          onClick={handleChat}
+        >
+          💬 Open Chat
+        </button>
+
+      </div>
+    );
+
+  }
+
+
+  if (status.iAmInterested) {
+
+    return (
+      <div className="interest-section">
+
+        <span className="interest-waiting-note">
+          Waiting for {student.name} to also show interest
+        </span>
+
+        <button
+          type="button"
+          className="interest-withdraw-button"
+          onClick={handleWithdraw}
+          disabled={working}
+        >
+          Withdraw
+        </button>
+
+      </div>
+    );
+
+  }
+
+
+  return (
+    <div className="interest-section">
+
+      <button
+        type="button"
+        className="interest-button"
+        onClick={handleExpressInterest}
+        disabled={working}
+      >
+        {working ? "..." : "💬 I'm interested"}
+      </button>
+
+      {status.theyAreInterested && (
+        <span className="interest-note">
+          {student.name} is interested in you — tap to match!
+        </span>
+      )}
+
+    </div>
+  );
+
+}
+
+
 // Handles fetching + showing the public average rating for a student,
 // and lets the current user submit their own rating + comment for them.
+
 function ReviewSection({ student, currentUser }) {
-  const [reviews, setReviews] = useState(null); // null = loading
+
+  const [reviews, setReviews] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -188,29 +398,42 @@ function ReviewSection({ student, currentUser }) {
   const [justSubmitted, setJustSubmitted] = useState(false);
 
   useEffect(() => {
+
     let cancelled = false;
 
     getReviewsForUser(student.uid).then((result) => {
-      if (!cancelled) setReviews(result);
+
+      if (!cancelled) {
+        setReviews(result);
+      }
+
     });
 
     return () => {
       cancelled = true;
     };
+
   }, [student.uid]);
+
 
   const avg = averageRating(reviews);
 
+
   // Has the current user already reviewed this student before?
   const existingReview =
-    reviews?.find((r) => r.reviewerUid === currentUser.uid) || null;
+    reviews?.find(
+      (r) => r.reviewerUid === currentUser.uid
+    ) || null;
+
 
   async function handleSubmit() {
+
     if (rating === 0) return;
 
     setSubmitting(true);
 
     try {
+
       await submitReview({
         revieweeUid: student.uid,
         reviewerUid: currentUser.uid,
@@ -219,51 +442,102 @@ function ReviewSection({ student, currentUser }) {
         comment,
       });
 
-      const updated = await getReviewsForUser(student.uid);
+      const updated = await getReviewsForUser(
+        student.uid
+      );
+
       setReviews(updated);
       setShowForm(false);
       setJustSubmitted(true);
+
     } catch (err) {
-      console.error("Failed to submit review:", err);
+
+      console.error(
+        "Failed to submit review:",
+        err
+      );
+
     } finally {
+
       setSubmitting(false);
+
     }
   }
+
 
   return (
     <div className="review-section">
 
       <div className="review-summary">
+
         {avg !== null ? (
+
           <span className="review-average">
-            ★ {avg} <span className="review-count">({reviews.length} review{reviews.length === 1 ? "" : "s"})</span>
+
+            ★ {avg}{" "}
+
+            <span className="review-count">
+              ({reviews.length} review
+              {reviews.length === 1 ? "" : "s"})
+            </span>
+
           </span>
+
         ) : reviews !== null ? (
-          <span className="review-average review-none">No reviews yet</span>
+
+          <span className="review-average review-none">
+            No reviews yet
+          </span>
+
         ) : (
-          <span className="review-average review-none">Loading reviews...</span>
+
+          <span className="review-average review-none">
+            Loading reviews...
+          </span>
+
         )}
 
+
         {!showForm && (
+
           <button
             type="button"
             className="review-toggle"
             onClick={() => {
+
               setShowForm(true);
+
               if (existingReview) {
+
                 setRating(existingReview.rating);
-                setComment(existingReview.comment || "");
+
+                setComment(
+                  existingReview.comment || ""
+                );
+
               }
+
             }}
           >
-            {existingReview || justSubmitted ? "Edit your review" : "Rate & review"}
+            {existingReview || justSubmitted
+              ? "Edit your review"
+              : "Rate & review"}
           </button>
+
         )}
+
       </div>
 
+
       {showForm && (
+
         <div className="review-form">
-          <StarInput value={rating} onChange={setRating} />
+
+          <StarInput
+            value={rating}
+            onChange={setRating}
+          />
+
 
           <textarea
             placeholder={`What was it like matching/rooming with ${student.name}?`}
@@ -272,7 +546,9 @@ function ReviewSection({ student, currentUser }) {
             rows={3}
           />
 
+
           <div className="review-form-actions">
+
             <button
               type="button"
               className="review-cancel"
@@ -281,26 +557,39 @@ function ReviewSection({ student, currentUser }) {
             >
               Cancel
             </button>
+
+
             <button
               type="button"
               className="review-submit"
               onClick={handleSubmit}
               disabled={rating === 0 || submitting}
             >
-              {submitting ? "Saving..." : "Submit review"}
+              {submitting
+                ? "Saving..."
+                : "Submit review"}
             </button>
+
           </div>
+
         </div>
+
       )}
 
     </div>
   );
+
 }
 
+
 function StarInput({ value, onChange }) {
+
   return (
+
     <div className="star-input">
+
       {[1, 2, 3, 4, 5].map((n) => (
+
         <button
           type="button"
           key={n}
@@ -310,9 +599,14 @@ function StarInput({ value, onChange }) {
         >
           ★
         </button>
+
       ))}
+
     </div>
+
   );
+
 }
+
 
 export default Matches;

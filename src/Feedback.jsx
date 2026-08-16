@@ -36,7 +36,7 @@ function Feedback({ currentUser, onBack }) {
   }
 
   return (
-    <div className="feedback">
+    <div className="feedback aurora-bg">
 
       <header className="feedback-header">
 

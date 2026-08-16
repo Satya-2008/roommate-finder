@@ -1,8 +1,8 @@
 .feedback {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #ffffff;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
   padding: 64px 24px 96px;
 }
 
@@ -11,6 +11,7 @@
   margin: 0 auto 40px;
   text-align: center;
   position: relative;
+  animation: fadeUp 0.5s ease both;
 }
 
 .feedback-header .back-home {
@@ -18,8 +19,8 @@
   top: 0;
   left: 0;
   background: transparent;
-  border: 1px solid #262626;
-  color: #8a8a8a;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   font-size: 14px;
   padding: 8px 16px;
   border-radius: 999px;
@@ -28,40 +29,44 @@
 }
 
 .feedback-header .back-home:hover {
-  border-color: #4a4a4a;
-  color: #ffffff;
+  border-color: var(--accent-pink);
+  color: var(--text-primary);
 }
 
 .feedback-header .tag {
   display: inline-block;
   margin: 0 0 20px;
   padding: 6px 14px;
-  border: 1px solid #262626;
+  border: 1px solid var(--accent-pink);
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8a8a;
+  color: var(--accent-pink);
 }
 
 .feedback-header h1 {
   margin: 0 0 16px;
+  font-family: var(--font-display);
   font-size: 38px;
   line-height: 1.1;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .feedback-header h1 span {
-  color: #7a7a7a;
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-amber));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .feedback-header > p {
   margin: 0;
   font-size: 15px;
   line-height: 1.6;
-  color: #8a8a8a;
+  color: var(--text-secondary);
 }
 
 .feedback-body {
@@ -70,10 +75,11 @@
 }
 
 .feedback-card {
-  background: #111111;
-  border: 1px solid #1f1f1f;
-  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
   padding: 32px;
+  animation: fadeUp 0.5s ease 0.1s both;
 }
 
 .feedback-card label {
@@ -81,7 +87,7 @@
   margin: 0 0 12px;
   font-size: 14px;
   font-weight: 500;
-  color: #cfcfcf;
+  color: var(--text-secondary);
 }
 
 .feedback-card label:not(:first-of-type) {
@@ -98,53 +104,53 @@
   border: none;
   font-size: 32px;
   line-height: 1;
-  color: #333333;
+  color: var(--border-soft);
   cursor: pointer;
   padding: 2px;
   transition: color 0.1s ease, transform 0.1s ease;
 }
 
 .star-input .star:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
 }
 
 .star-input .star.filled {
-  color: #facc15;
+  color: var(--accent-amber);
 }
 
 .feedback-card textarea {
   width: 100%;
-  background: #0a0a0a;
-  border: 1px solid #262626;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 14px;
   font-family: inherit;
-  color: #ffffff;
+  color: var(--text-primary);
   resize: vertical;
   outline: none;
   transition: border-color 0.15s ease;
 }
 
 .feedback-card textarea::placeholder {
-  color: #5a5a5a;
+  color: var(--text-muted);
 }
 
 .feedback-card textarea:focus {
-  border-color: #4ADE80;
+  border-color: var(--accent-pink);
 }
 
 .feedback-error {
   margin: 14px 0 0;
   font-size: 13px;
-  color: #ef4444;
+  color: var(--accent-red);
 }
 
 .feedback-card .submit-button {
   width: 100%;
   margin-top: 28px;
-  background: #ffffff;
-  color: #0a0a0a;
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-amber));
+  color: #1a1220;
   border: none;
   border-radius: 999px;
   padding: 14px 24px;
@@ -152,11 +158,12 @@
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
 .feedback-card .submit-button:hover:not(:disabled) {
-  background: #e6e6e6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(236, 72, 153, 0.35);
 }
 
 .feedback-card .submit-button:disabled {
@@ -165,29 +172,31 @@
 }
 
 .feedback-thanks {
-  background: #111111;
-  border: 1px solid #1f1f1f;
-  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
   padding: 48px 32px;
   text-align: center;
+  animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .feedback-thanks-icon {
   font-size: 32px;
-  color: #4ADE80;
+  color: var(--accent-green);
   margin: 0 0 16px;
 }
 
 .feedback-thanks h2 {
   margin: 0 0 8px;
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 700;
+  font-family: var(--font-display);
 }
 
 .feedback-thanks p {
   margin: 0 0 28px;
   font-size: 14px;
-  color: #8a8a8a;
+  color: var(--text-secondary);
 }
 
 .feedback-thanks .submit-button {
@@ -195,12 +204,14 @@
   margin-top: 0;
   padding: 12px 28px;
   background: transparent;
-  border: 1px solid #262626;
-  color: #ffffff;
+  border: 1px solid var(--border-soft);
+  color: var(--text-primary);
 }
 
 .feedback-thanks .submit-button:hover {
-  border-color: #4a4a4a;
+  border-color: var(--border-soft-hover);
+  transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 640px) {

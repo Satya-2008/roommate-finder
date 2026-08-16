@@ -2,7 +2,7 @@ import "./Credits.css";
 
 function Credits({ onBack }) {
   return (
-    <div className="credits">
+    <div className="credits aurora-bg">
 
       <header className="credits-header">
 

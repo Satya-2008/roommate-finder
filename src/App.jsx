@@ -5,6 +5,9 @@ import Login from "./Login";
 import Credits from "./Credits";
 import MyReviews from "./MyReviews";
 import Feedback from "./Feedback";
+import Chat from "./Chat";
+import RoommateFound from "./RoommateFound";
+import { getLockedPartnerUid, getAllLockedUids } from "./confirmApi";
 
 // Same flag as in Matches.jsx — keep these two in sync. Hides the
 // student peer-review nav entry without deleting any of the feature.
@@ -16,6 +19,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
   getDocs,
   collection,
   serverTimestamp,
@@ -28,6 +32,7 @@ function App() {
   const [matches, setMatches] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [activeChat, setActiveChat] = useState(null); // { chatId, otherUser }
 
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -77,6 +82,70 @@ function App() {
     return unsubscribe;
   }, []);
 
+  // undefined = still checking, null = not locked, object = locked-in
+  // partner's profile (fetched from their students/ doc for display).
+  const [lockedPartner, setLockedPartner] = useState(undefined);
+
+  useEffect(() => {
+    if (!user) {
+      setLockedPartner(undefined);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function checkLocked() {
+      try {
+        const partnerUid = await getLockedPartnerUid(user.uid);
+
+        if (!partnerUid) {
+          if (!cancelled) setLockedPartner(null);
+          return;
+        }
+
+        const partnerSnap = await getDoc(doc(db, "students", partnerUid));
+
+        if (!cancelled) {
+          setLockedPartner(
+            partnerSnap.exists()
+              ? { uid: partnerUid, ...partnerSnap.data() }
+              : { uid: partnerUid, name: "Your roommate" }
+          );
+        }
+      } catch (err) {
+        console.error("Failed to check locked roommate status:", err);
+        if (!cancelled) setLockedPartner(null);
+      }
+    }
+
+    checkLocked();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  // Presence heartbeat — lets other people see "Online" / "Last seen
+  // Xm ago" in chat. Only runs once the user has an actual profile
+  // doc to update (updateDoc fails on a doc that doesn't exist yet).
+  useEffect(() => {
+    if (!user || !myProfile) return;
+
+    async function heartbeat() {
+      try {
+        await updateDoc(doc(db, "students", user.uid), {
+          lastActive: serverTimestamp(),
+        });
+      } catch (err) {
+        console.error("Presence heartbeat failed:", err);
+      }
+    }
+
+    heartbeat();
+    const interval = setInterval(heartbeat, 45000);
+    return () => clearInterval(interval);
+  }, [user, myProfile]);
+
   function handleLogout() {
     signOut(auth);
     setPage("home");
@@ -104,10 +173,14 @@ function App() {
 
       // Fetch everyone's profiles, excluding the current user, to match against.
       const snapshot = await getDocs(collection(db, "students"));
+      const lockedUids = await getAllLockedUids();
 
       const allStudents = snapshot.docs
         .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
-        .filter((student) => student.uid !== user.uid);
+        .filter(
+          (student) =>
+            student.uid !== user.uid && !lockedUids.has(student.uid)
+        );
 
       // uid is needed on the current user's own profile so mutual-match
       // checking can find them inside a candidate's own ranked list.
@@ -136,10 +209,14 @@ function App() {
 
     try {
       const snapshot = await getDocs(collection(db, "students"));
+      const lockedUids = await getAllLockedUids();
 
       const allStudents = snapshot.docs
         .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
-        .filter((student) => student.uid !== user.uid);
+        .filter(
+          (student) =>
+            student.uid !== user.uid && !lockedUids.has(student.uid)
+        );
 
       const currentUserProfile = { ...myProfile, uid: user.uid };
 
@@ -172,7 +249,34 @@ function App() {
     return <Login />;
   }
 
+  // Renders the celebration/locked-in screen. Called from multiple
+  // guard points below, not just the default home fallback, so a
+  // locked user can never land on matches/questionnaire/someone-else's
+  // chat via back-navigation or stale state.
+  function renderLocked() {
+    return (
+      <RoommateFound
+        partner={lockedPartner}
+        onOpenChat={() => {
+          setActiveChat({
+            chatId: [user.uid, lockedPartner.uid].sort().join("_"),
+            otherUser: { uid: lockedPartner.uid, name: lockedPartner.name },
+          });
+          setPage("chat");
+        }}
+        onLogout={handleLogout}
+        onFeedback={() => setPage("feedback")}
+      />
+    );
+  }
+
   if (page === "questionnaire") {
+    // Once locked, editing/resubmitting a profile doesn't make sense —
+    // redirect instead of letting them re-enter the matching pool.
+    if (lockedPartner) {
+      return renderLocked();
+    }
+
     return (
       <>
         <Questionnaire
@@ -195,11 +299,41 @@ function App() {
   }
 
   if (page === "matches") {
+    // Same reasoning — a stale matches list from before locking in
+    // shouldn't stay browsable/interactable after the fact.
+    if (lockedPartner) {
+      return renderLocked();
+    }
+
     return (
       <Matches
         matches={matches}
         onBack={() => setPage("questionnaire")}
         currentUser={{ uid: user.uid, name: myProfile?.name || user.email }}
+        onOpenChat={(chatInfo) => {
+          setActiveChat(chatInfo);
+          setPage("chat");
+        }}
+      />
+    );
+  }
+
+  if (page === "chat" && activeChat) {
+    // Once locked, the ONLY chat that should stay reachable is the
+    // one with the confirmed partner — block chats with anyone else.
+    if (lockedPartner && activeChat.otherUser.uid !== lockedPartner.uid) {
+      return renderLocked();
+    }
+
+    return (
+      <Chat
+        chatId={activeChat.chatId}
+        otherUser={activeChat.otherUser}
+        currentUser={{ uid: user.uid }}
+        onBack={() => setPage(lockedPartner ? "home" : "matches")}
+        onLocked={(partnerUid) => {
+          setLockedPartner({ uid: partnerUid, name: activeChat.otherUser.name });
+        }}
       />
     );
   }
@@ -226,8 +360,15 @@ function App() {
     );
   }
 
+  // Locked into a confirmed roommate — replaces just the default home
+  // screen, since further matching doesn't make sense once both people
+  // have committed.
+  if (lockedPartner) {
+    return renderLocked();
+  }
+
   return (
-    <div className="app">
+    <div className="app aurora-bg">
 
       <nav className="navbar">
         <div className="logo">
@@ -402,7 +543,15 @@ function App() {
           >
             @Transformer256
           </a>
-          {" · "}
+          {" on Telegram · "}
+          <a
+            href="https://www.reddit.com/user/CompetitiveLog1671"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            u/CompetitiveLog1671
+          </a>
+          {" on Reddit · "}
           <button
             className="footer-link-button"
             onClick={() => setPage("credits")}

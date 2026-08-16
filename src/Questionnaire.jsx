@@ -93,7 +93,7 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
   }
 
   return (
-    <div className="questionnaire">
+    <div className="questionnaire aurora-bg">
 
       <header className="questionnaire-header">
 
@@ -356,7 +356,8 @@ function Questionnaire({ onBack, onSubmit, initialData }) {
             <h3>Anything specific you're looking for? (optional)</h3>
             <p className="question-hint">
               This is shown directly on your match cards — not used in
-              scoring, just a way to flag a specific ask (e.g. "looking for chatting buddy", "looking for someone in the badminton
+              scoring, just a way to flag a specific ask (e.g. "must be okay
+              with a small pet", "looking for someone in the badminton
               club").
             </p>
             <textarea

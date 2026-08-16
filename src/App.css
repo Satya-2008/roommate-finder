@@ -1,10 +1,3 @@
-/* ==========================================================================
-   RoomMate — App (landing page)
-   Same token system as Questionnaire.css / Matches.css:
-   bg #0a0a0a · surface #141414 · border #262626
-   text #ffffff · text-secondary #8a8a8a · accent #4ADE80
-   ========================================================================== */
-
 * {
   box-sizing: border-box;
 }
@@ -15,9 +8,9 @@ body {
 
 .app {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #ffffff;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
 }
 
 /* ---------- Navbar ---------- */
@@ -29,16 +22,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  animation: fadeUp 0.5s ease both;
 }
 
 .logo {
-  font-size: 20px;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
   letter-spacing: -0.01em;
-}
-
-.logo span {
-  color: #7a7a7a;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .nav-links {
@@ -48,20 +43,20 @@ body {
 }
 
 .nav-links a {
-  color: #b5b5b5;
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
   transition: color 0.15s ease;
 }
 
 .nav-links a:hover {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .nav-links .link-button {
   background: none;
   border: none;
-  color: #b5b5b5;
+  color: var(--text-secondary);
   font-size: 14px;
   font-family: inherit;
   cursor: pointer;
@@ -70,12 +65,12 @@ body {
 }
 
 .nav-links .link-button:hover {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
-.nav-links button {
-  background: #ffffff;
-  color: #0a0a0a;
+.nav-links button:not(.link-button) {
+  background: var(--grad-primary);
+  color: #ffffff;
   border: none;
   border-radius: 999px;
   padding: 10px 22px;
@@ -83,11 +78,12 @@ body {
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.nav-links button:hover {
-  background: #e6e6e6;
+.nav-links button:not(.link-button):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
 }
 
 /* ---------- Hero ---------- */
@@ -106,25 +102,31 @@ body {
   display: inline-block;
   margin: 0 0 28px;
   padding: 6px 14px;
-  border: 1px solid #262626;
+  border: 1px solid var(--border-soft);
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8a8a;
+  color: var(--accent-cyan);
+  animation: fadeUp 0.5s ease 0.05s both;
 }
 
 .hero-text h1 {
   margin: 0 0 24px;
+  font-family: var(--font-display);
   font-size: 64px;
   line-height: 1.05;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
+  animation: fadeUp 0.6s ease 0.1s both;
 }
 
 .hero-text h1 span {
-  color: #6a6a6a;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .hero-text .description {
@@ -132,12 +134,13 @@ body {
   max-width: 440px;
   font-size: 17px;
   line-height: 1.6;
-  color: #8a8a8a;
+  color: var(--text-secondary);
+  animation: fadeUp 0.6s ease 0.15s both;
 }
 
 .start-button {
-  background: #ffffff;
-  color: #0a0a0a;
+  background: var(--grad-primary);
+  color: #ffffff;
   border: none;
   border-radius: 999px;
   padding: 16px 28px;
@@ -145,22 +148,23 @@ body {
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
+  animation: fadeUp 0.6s ease 0.2s both, pulseGlow 2.4s ease-in-out 1.2s infinite;
+  transition: transform 0.15s ease;
 }
 
 .start-button:hover {
-  background: #e6e6e6;
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .start-button:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .start-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  animation: fadeUp 0.6s ease 0.2s both;
 }
 
 .hero-actions {
@@ -168,33 +172,41 @@ body {
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+
+.hero-actions .start-button {
+  animation: pulseGlow 2.4s ease-in-out infinite;
 }
 
 .edit-profile-button {
   background: transparent;
-  border: 1px solid #262626;
-  color: #b5b5b5;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   border-radius: 999px;
   padding: 15px 24px;
   font-size: 15px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .edit-profile-button:hover {
-  border-color: #4a4a4a;
-  color: #ffffff;
+  border-color: var(--accent-violet);
+  color: var(--text-primary);
+  transform: translateY(-1px);
 }
 
-/* ---------- Match card ---------- */
+/* ---------- Match card preview ---------- */
 
 .match-card {
-  background: #111111;
-  border: 1px solid #1f1f1f;
-  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 20px;
   padding: 28px 32px;
+  animation: bounceIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+  box-shadow: var(--shadow-glow);
 }
 
 .match-title {
@@ -203,7 +215,7 @@ body {
   justify-content: space-between;
   padding-bottom: 20px;
   margin-bottom: 16px;
-  border-bottom: 1px solid #1f1f1f;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .match-title span {
@@ -211,13 +223,17 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #6a6a6a;
+  color: var(--text-muted);
 }
 
 .match-title strong {
-  font-size: 26px;
-  font-weight: 800;
-  color: #4ADE80;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .trait {
@@ -225,9 +241,9 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid var(--bg-surface-2);
   font-size: 14px;
-  color: #cfcfcf;
+  color: var(--text-secondary);
 }
 
 .trait:last-child {
@@ -236,11 +252,11 @@ body {
 
 .trait b {
   font-weight: 700;
-  color: #4ADE80;
+  color: var(--accent-green);
 }
 
 .trait:last-child b {
-  color: #e0a94a;
+  color: var(--accent-amber);
 }
 
 /* ---------- How it works ---------- */
@@ -249,7 +265,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 48px 120px;
-  border-top: 1px solid #1a1a1a;
+  border-top: 1px solid var(--border-soft);
   padding-top: 96px;
 }
 
@@ -257,19 +273,20 @@ body {
   display: inline-block;
   margin: 0 0 20px;
   padding: 6px 14px;
-  border: 1px solid #262626;
+  border: 1px solid var(--border-soft);
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8a8a;
+  color: var(--accent-pink);
 }
 
 .how h2 {
   margin: 0 0 56px;
+  font-family: var(--font-display);
   font-size: 36px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
   max-width: 520px;
 }
@@ -281,17 +298,43 @@ body {
 }
 
 .steps > div {
-  border-top: 1px solid #262626;
+  border-top: 2px solid var(--border-soft);
   padding-top: 24px;
+  transition: transform 0.2s ease;
+}
+
+.steps > div:hover {
+  transform: translateY(-4px);
+}
+
+.steps > div:nth-child(1) {
+  border-top-color: var(--accent-violet);
+}
+
+.steps > div:nth-child(2) {
+  border-top-color: var(--accent-pink);
+}
+
+.steps > div:nth-child(3) {
+  border-top-color: var(--accent-cyan);
 }
 
 .steps span {
   display: block;
   margin-bottom: 20px;
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-size: 14px;
   font-weight: 700;
-  color: #4ADE80;
+  color: var(--accent-violet);
   font-variant-numeric: tabular-nums;
+}
+
+.steps > div:nth-child(2) span {
+  color: var(--accent-pink);
+}
+
+.steps > div:nth-child(3) span {
+  color: var(--accent-cyan);
 }
 
 .steps h3 {
@@ -304,7 +347,7 @@ body {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: #8a8a8a;
+  color: var(--text-secondary);
 }
 
 /* ---------- Footer ---------- */
@@ -313,18 +356,18 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 48px 40px;
-  border-top: 1px solid #1a1a1a;
+  border-top: 1px solid var(--border-soft);
   text-align: center;
 }
 
 .app-footer p {
   margin: 0;
   font-size: 13px;
-  color: #6a6a6a;
+  color: var(--text-muted);
 }
 
 .app-footer a {
-  color: #4ADE80;
+  color: var(--accent-cyan);
   text-decoration: none;
   font-weight: 600;
 }
@@ -336,7 +379,7 @@ body {
 .footer-link-button {
   background: none;
   border: none;
-  color: #6a6a6a;
+  color: var(--text-muted);
   font-size: 13px;
   font-family: inherit;
   cursor: pointer;
@@ -344,7 +387,7 @@ body {
 }
 
 .footer-link-button:hover {
-  color: #b5b5b5;
+  color: var(--text-secondary);
 }
 
 /* ---------- Responsive ---------- */
@@ -400,15 +443,8 @@ body {
 
 .nav-links a:focus-visible,
 .nav-links button:focus-visible,
-.start-button:focus-visible {
-  outline: 2px solid #4ADE80;
+.start-button:focus-visible,
+.edit-profile-button:focus-visible {
+  outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .start-button,
-  .nav-links button,
-  .nav-links a {
-    transition: none;
-  }
 }

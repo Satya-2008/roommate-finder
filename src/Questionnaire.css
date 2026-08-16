@@ -1,15 +1,8 @@
-/* ==========================================================================
-   RoomMate — Questionnaire
-   Token system pulled from the landing page:
-   bg #0a0a0a · surface #141414 · border #262626
-   text #ffffff · text-secondary #8a8a8a · accent #4ADE80 (match ✓ green)
-   ========================================================================== */
-
 .questionnaire {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #ffffff;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
   padding: 64px 24px 96px;
 }
 
@@ -20,6 +13,7 @@
   margin: 0 auto 56px;
   text-align: center;
   position: relative;
+  animation: fadeUp 0.5s ease both;
 }
 
 .back-home {
@@ -27,8 +21,8 @@
   top: 0;
   left: 0;
   background: transparent;
-  border: 1px solid #262626;
-  color: #8a8a8a;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   font-size: 14px;
   padding: 8px 16px;
   border-radius: 999px;
@@ -37,40 +31,44 @@
 }
 
 .back-home:hover {
-  border-color: #4a4a4a;
-  color: #ffffff;
+  border-color: var(--accent-violet);
+  color: var(--text-primary);
 }
 
 .questionnaire-header .tag {
   display: inline-block;
   margin: 0 0 20px;
   padding: 6px 14px;
-  border: 1px solid #262626;
+  border: 1px solid var(--border-soft);
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8a8a;
+  color: var(--accent-cyan);
 }
 
 .questionnaire-header h1 {
   margin: 0 0 16px;
+  font-family: var(--font-display);
   font-size: 44px;
   line-height: 1.1;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .questionnaire-header h1 span {
-  color: #7a7a7a;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .questionnaire-header > p {
   margin: 0;
   font-size: 16px;
   line-height: 1.6;
-  color: #8a8a8a;
+  color: var(--text-secondary);
 }
 
 /* ---------- Form shell ---------- */
@@ -84,10 +82,11 @@
 }
 
 .form-section {
-  background: #111111;
-  border: 1px solid #1f1f1f;
-  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
   padding: 32px;
+  animation: fadeUp 0.5s ease both;
 }
 
 .form-section h2 {
@@ -96,7 +95,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #8a8a8a;
+  color: var(--accent-pink);
 }
 
 .form-section label {
@@ -104,7 +103,7 @@
   margin: 20px 0 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #cfcfcf;
+  color: var(--text-secondary);
 }
 
 .form-section label:first-of-type {
@@ -116,12 +115,12 @@
 .form-section input[type="text"],
 .form-section select {
   width: 100%;
-  background: #0a0a0a;
-  border: 1px solid #262626;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 15px;
-  color: #ffffff;
+  color: var(--text-primary);
   font-family: inherit;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -129,17 +128,17 @@
 }
 
 .form-section input[type="text"]::placeholder {
-  color: #5a5a5a;
+  color: var(--text-muted);
 }
 
 .form-section input[type="text"]:focus,
 .form-section select:focus {
-  border-color: #4ADE80;
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+  border-color: var(--accent-violet);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 .form-section select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a8a8a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a79fc9' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   padding-right: 36px;
@@ -147,20 +146,21 @@
 }
 
 .form-section select option {
-  background: #141414;
-  color: #ffffff;
+  background: var(--bg-surface);
+  color: var(--text-primary);
 }
 
 .form-error {
   max-width: 640px;
   margin: 0 auto 16px;
   padding: 12px 16px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid #ef4444;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid var(--accent-red);
   border-radius: 10px;
   font-size: 14px;
-  color: #ef4444;
+  color: var(--accent-red);
   text-align: center;
+  animation: bounceIn 0.4s ease both;
 }
 
 /* ---------- Question blocks ---------- */
@@ -177,7 +177,37 @@
   margin: 0 0 12px;
   font-size: 15px;
   font-weight: 500;
-  color: #cfcfcf;
+  color: var(--text-secondary);
+}
+
+.question-hint {
+  margin: -6px 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.specific-preference-input {
+  width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-primary);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.specific-preference-input::placeholder {
+  color: var(--text-muted);
+}
+
+.specific-preference-input:focus {
+  border-color: var(--accent-violet);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 .options {
@@ -187,64 +217,37 @@
 }
 
 .option {
-  background: #0a0a0a;
-  border: 1px solid #262626;
-  color: #b5b5b5;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
   font-size: 14px;
   font-family: inherit;
   padding: 10px 16px;
   border-radius: 999px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
 
 .option:hover {
-  border-color: #4a4a4a;
-  color: #ffffff;
+  border-color: var(--border-soft-hover);
+  color: var(--text-primary);
+  transform: translateY(-1px);
 }
 
 .option.selected {
-  background: rgba(74, 222, 128, 0.12);
-  border-color: #4ADE80;
-  color: #4ADE80;
-}
-
-.question-hint {
-  margin: -6px 0 14px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #6a6a6a;
-}
-
-.specific-preference-input {
-  width: 100%;
-  background: #0a0a0a;
-  border: 1px solid #262626;
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 14px;
-  font-family: inherit;
+  background: var(--grad-primary);
+  border-color: transparent;
   color: #ffffff;
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.specific-preference-input::placeholder {
-  color: #5a5a5a;
-}
-
-.specific-preference-input:focus {
-  border-color: #4ADE80;
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+  font-weight: 600;
+  animation: popScale 0.35s ease;
 }
 
 /* ---------- Submit ---------- */
 
 .submit-button {
   width: 100%;
-  background: #ffffff;
-  color: #0a0a0a;
+  background: var(--grad-primary);
+  color: #ffffff;
   border: none;
   border-radius: 999px;
   padding: 16px 24px;
@@ -252,16 +255,16 @@
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .submit-button:hover {
-  background: #e6e6e6;
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
 }
 
 .submit-button:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
 }
 
 /* ---------- Responsive ---------- */
@@ -293,7 +296,7 @@
 .submit-button:focus-visible,
 .form-section input:focus-visible,
 .form-section select:focus-visible {
-  outline: 2px solid #4ADE80;
+  outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
 }
 
