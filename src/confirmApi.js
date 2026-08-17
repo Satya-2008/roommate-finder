@@ -3,6 +3,7 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  updateDoc,
   collection,
   query,
   where,
@@ -40,6 +41,29 @@ export async function ensureRoommatePair(uidA, uidB) {
 
   if (!snap.exists()) {
     await setDoc(ref, { uidA, uidB, confirmedAt: serverTimestamp() });
+  }
+
+  // Also stamp isLocked directly onto each person's own students/ doc.
+  // This is what actually lets Firestore RULES block further
+  // "I'm interested" writes for a locked-in user — filtering the
+  // match list client-side isn't enough, since a stale already-open
+  // list would still let the write through without this.
+  try {
+    await updateDoc(doc(db, "students", uidA), {
+      isLocked: true,
+      roommateUid: uidB,
+    });
+  } catch (err) {
+    console.error("Failed to stamp isLocked on", uidA, err);
+  }
+
+  try {
+    await updateDoc(doc(db, "students", uidB), {
+      isLocked: true,
+      roommateUid: uidA,
+    });
+  } catch (err) {
+    console.error("Failed to stamp isLocked on", uidB, err);
   }
 }
 

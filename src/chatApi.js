@@ -7,6 +7,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { updateThreadOnMessage } from "./chatThreadsApi";
 
 export async function sendMessage(chatId, senderUid, text) {
   const trimmed = text.trim();
@@ -17,6 +18,14 @@ export async function sendMessage(chatId, senderUid, text) {
     text: trimmed,
     createdAt: serverTimestamp(),
   });
+
+  // Update both participants' thread metadata so the recipient's
+  // unread badge/reminder picks this up next time they open the app.
+  try {
+    await updateThreadOnMessage(chatId, senderUid);
+  } catch (err) {
+    console.error("Failed to update thread metadata:", err);
+  }
 }
 
 // Subscribes to a chat's messages in real time. Calls `callback` with

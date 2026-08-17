@@ -175,6 +175,45 @@ body {
   animation: fadeUp 0.6s ease 0.2s both;
 }
 
+.unread-reminder {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: rgba(236, 72, 153, 0.1);
+  border: 1px solid var(--accent-pink);
+  border-radius: 14px;
+  animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.unread-reminder-title {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-pink);
+}
+
+.unread-reminder-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.unread-thread-button {
+  background: var(--grad-primary);
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.unread-thread-button:hover {
+  transform: translateY(-1px);
+}
+
 .hero-actions .start-button {
   animation: pulseGlow 2.4s ease-in-out infinite;
 }

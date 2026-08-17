@@ -7,6 +7,7 @@ import {
   listenToConfirmStatus,
   ensureRoommatePair,
 } from "./confirmApi";
+import { ensureThread, markThreadRead } from "./chatThreadsApi";
 import "./Chat.css";
 
 const ONLINE_THRESHOLD_MS = 90 * 1000;
@@ -87,6 +88,25 @@ function Chat({ chatId, currentUser, otherUser, onBack, onLocked }) {
     const interval = setInterval(() => setTick((t) => t + 1), 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Register this thread for both participants (so it shows up in
+  // "your chats" for the unread reminder), and mark it read for the
+  // current user since they're actively viewing it right now.
+  useEffect(() => {
+    ensureThread(
+      chatId,
+      currentUser.uid,
+      currentUser.name || "Someone",
+      otherUser.uid,
+      otherUser.name || "Someone"
+    ).catch((err) => console.error("Failed to register chat thread:", err));
+  }, [chatId, currentUser.uid, currentUser.name, otherUser.uid, otherUser.name]);
+
+  useEffect(() => {
+    markThreadRead(currentUser.uid, chatId).catch((err) =>
+      console.error("Failed to mark thread read:", err)
+    );
+  }, [currentUser.uid, chatId, messages.length]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -8,6 +8,7 @@ import Feedback from "./Feedback";
 import Chat from "./Chat";
 import RoommateFound from "./RoommateFound";
 import { getLockedPartnerUid, getAllLockedUids } from "./confirmApi";
+import { listenToMyThreads, isThreadUnread } from "./chatThreadsApi";
 
 // Same flag as in Matches.jsx — keep these two in sync. Hides the
 // student peer-review nav entry without deleting any of the feature.
@@ -145,6 +146,25 @@ function App() {
     const interval = setInterval(heartbeat, 45000);
     return () => clearInterval(interval);
   }, [user, myProfile]);
+
+  // Live list of this user's chat threads, used to show a "new
+  // messages" reminder on the home page without them needing to
+  // reopen each chat individually to find out.
+  const [myThreads, setMyThreads] = useState([]);
+
+  useEffect(() => {
+    if (!user) {
+      setMyThreads([]);
+      return;
+    }
+
+    const unsubscribe = listenToMyThreads(user.uid, setMyThreads);
+    return unsubscribe;
+  }, [user]);
+
+  const unreadThreads = user
+    ? myThreads.filter((t) => isThreadUnread(t, user.uid))
+    : [];
 
   function handleLogout() {
     signOut(auth);
@@ -329,7 +349,7 @@ function App() {
       <Chat
         chatId={activeChat.chatId}
         otherUser={activeChat.otherUser}
-        currentUser={{ uid: user.uid }}
+        currentUser={{ uid: user.uid, name: myProfile?.name || user.email }}
         onBack={() => setPage(lockedPartner ? "home" : "matches")}
         onLocked={(partnerUid) => {
           setLockedPartner({ uid: partnerUid, name: activeChat.otherUser.name });
@@ -454,6 +474,32 @@ function App() {
             <p style={{ color: "#ef4444", marginTop: "16px", fontSize: "14px" }}>
               {submitError}
             </p>
+          )}
+
+          {unreadThreads.length > 0 && (
+            <div className="unread-reminder">
+              <p className="unread-reminder-title">
+                💬 You have {unreadThreads.length} new message
+                {unreadThreads.length === 1 ? "" : "s"}
+              </p>
+              <div className="unread-reminder-list">
+                {unreadThreads.map((thread) => (
+                  <button
+                    key={thread.id}
+                    className="unread-thread-button"
+                    onClick={() => {
+                      setActiveChat({
+                        chatId: thread.chatId,
+                        otherUser: { uid: thread.otherUid, name: thread.otherName },
+                      });
+                      setPage("chat");
+                    }}
+                  >
+                    {thread.otherName}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
         </div>
