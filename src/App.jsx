@@ -39,7 +39,6 @@ import {
 
 import { findMatchesWithMutual } from "./matching";
 
-// Same flag as in Matches.jsx
 const STUDENT_REVIEWS_ENABLED = false;
 
 
@@ -58,15 +57,8 @@ function AppContent() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Current user's saved profile
-  // undefined = still checking
-  // null = no profile
-  // object = profile exists
   const [myProfile, setMyProfile] = useState(undefined);
 
-  // undefined = still checking
-  // null = not locked
-  // object = locked partner
   const [lockedPartner, setLockedPartner] = useState(undefined);
 
   const [myThreads, setMyThreads] = useState([]);
@@ -106,7 +98,9 @@ function AppContent() {
 
         if (!cancelled) {
           setMyProfile(
-            snapshot.exists() ? snapshot.data() : null
+            snapshot.exists()
+              ? snapshot.data()
+              : null
           );
         }
       } catch (err) {
@@ -143,7 +137,8 @@ function AppContent() {
 
     async function checkLocked() {
       try {
-        const partnerUid = await getLockedPartnerUid(user.uid);
+        const partnerUid =
+          await getLockedPartnerUid(user.uid);
 
         if (!partnerUid) {
           if (!cancelled) {
@@ -261,7 +256,7 @@ function AppContent() {
     setMyProfile(undefined);
     setLockedPartner(undefined);
 
-    navigate("/login");
+    navigate("/");
   }
 
 
@@ -281,13 +276,11 @@ function AppContent() {
         updatedAt: serverTimestamp(),
       };
 
-      // Save profile
       await setDoc(
         doc(db, "students", user.uid),
         profile
       );
 
-      // Fetch all profiles
       const snapshot = await getDocs(
         collection(db, "students")
       );
@@ -435,6 +428,7 @@ function AppContent() {
 
   /* =========================================================
      HOME PAGE
+     PUBLIC — DOES NOT REQUIRE LOGIN
   ========================================================= */
 
   function Home() {
@@ -457,25 +451,28 @@ function AppContent() {
               How it works
             </a>
 
-            {STUDENT_REVIEWS_ENABLED && (
+            {STUDENT_REVIEWS_ENABLED &&
+              user && (
+                <button
+                  className="link-button"
+                  onClick={() =>
+                    navigate("/reviews")
+                  }
+                >
+                  My Reviews
+                </button>
+            )}
+
+            {user && (
               <button
                 className="link-button"
                 onClick={() =>
-                  navigate("/reviews")
+                  navigate("/feedback")
                 }
               >
-                My Reviews
+                Feedback
               </button>
             )}
-
-            <button
-              className="link-button"
-              onClick={() =>
-                navigate("/feedback")
-              }
-            >
-              Feedback
-            </button>
 
             <button
               className="link-button"
@@ -486,11 +483,21 @@ function AppContent() {
               About
             </button>
 
-            <button
-              onClick={handleLogout}
-            >
-              Log out
-            </button>
+            {user ? (
+              <button
+                onClick={handleLogout}
+              >
+                Log out
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  navigate("/login")
+                }
+              >
+                Log in
+              </button>
+            )}
 
           </div>
         </nav>
@@ -519,45 +526,64 @@ function AppContent() {
             </p>
 
 
-            {myProfile === undefined ? (
+            {user ? (
 
-              <div
-                style={{
-                  height: "52px",
-                }}
-              />
+              myProfile === undefined ? (
 
-            ) : myProfile ? (
+                <div
+                  style={{
+                    height: "52px",
+                  }}
+                />
 
-              <div className="hero-actions">
+              ) : myProfile ? (
+
+                <div className="hero-actions">
+
+                  <button
+                    className="start-button"
+                    onClick={viewMyMatches}
+                    disabled={submitting}
+                  >
+                    {submitting
+                      ? "Loading..."
+                      : "View My Matches →"}
+                  </button>
+
+                  <button
+                    className="edit-profile-button"
+                    onClick={() =>
+                      navigate(
+                        "/questionnaire"
+                      )
+                    }
+                  >
+                    Edit My Profile
+                  </button>
+
+                </div>
+
+              ) : (
 
                 <button
                   className="start-button"
-                  onClick={viewMyMatches}
-                  disabled={submitting}
-                >
-                  {submitting
-                    ? "Loading..."
-                    : "View My Matches →"}
-                </button>
-
-                <button
-                  className="edit-profile-button"
                   onClick={() =>
-                    navigate("/questionnaire")
+                    navigate(
+                      "/questionnaire"
+                    )
                   }
                 >
-                  Edit My Profile
+                  Find My Roommate →
                 </button>
 
-              </div>
+              )
 
             ) : (
 
               <button
                 className="start-button"
                 onClick={() =>
-                  navigate("/questionnaire")
+                  navigate("/login")
                 }
               >
                 Find My Roommate →
@@ -579,54 +605,53 @@ function AppContent() {
             )}
 
 
-            {unreadThreads.length > 0 && (
-              <div className="unread-reminder">
+            {user &&
+              unreadThreads.length > 0 && (
+                <div className="unread-reminder">
 
-                <p className="unread-reminder-title">
-                  💬 You have{" "}
-                  {unreadThreads.length} new message
-                  {unreadThreads.length === 1
-                    ? ""
-                    : "s"}
-                </p>
+                  <p className="unread-reminder-title">
+                    💬 You have{" "}
+                    {unreadThreads.length} new message
+                    {unreadThreads.length === 1
+                      ? ""
+                      : "s"}
+                  </p>
 
-                <div className="unread-reminder-list">
+                  <div className="unread-reminder-list">
 
-                  {unreadThreads.map(
-                    (thread) => (
+                    {unreadThreads.map(
+                      (thread) => (
+                        <button
+                          key={thread.id}
+                          className="unread-thread-button"
 
-                      <button
-                        key={thread.id}
-                        className="unread-thread-button"
+                          onClick={() => {
+                            navigate(
+                              "/chat",
+                              {
+                                state: {
+                                  chatId:
+                                    thread.chatId,
 
-                        onClick={() => {
-                          navigate(
-                            "/chat",
-                            {
-                              state: {
-                                chatId:
-                                  thread.chatId,
+                                  otherUser: {
+                                    uid:
+                                      thread.otherUid,
 
-                                otherUser: {
-                                  uid:
-                                    thread.otherUid,
-
-                                  name:
-                                    thread.otherName,
+                                    name:
+                                      thread.otherName,
+                                  },
                                 },
-                              },
-                            }
-                          );
-                        }}
-                      >
-                        {thread.otherName}
-                      </button>
+                              }
+                            );
+                          }}
+                        >
+                          {thread.otherName}
+                        </button>
+                      )
+                    )}
 
-                    )
-                  )}
-
+                  </div>
                 </div>
-              </div>
             )}
 
           </div>
@@ -788,9 +813,19 @@ function AppContent() {
 
   /* =========================================================
      QUESTIONNAIRE
+     PROTECTED
   ========================================================= */
 
   function QuestionnairePage() {
+
+    if (!user) {
+      return (
+        <Navigate
+          to="/login"
+          replace
+        />
+      );
+    }
 
     if (lockedPartner) {
       return renderLocked();
@@ -843,9 +878,19 @@ function AppContent() {
 
   /* =========================================================
      MATCHES
+     PROTECTED
   ========================================================= */
 
   function MatchesPage() {
+
+    if (!user) {
+      return (
+        <Navigate
+          to="/login"
+          replace
+        />
+      );
+    }
 
     if (lockedPartner) {
       return renderLocked();
@@ -878,9 +923,19 @@ function AppContent() {
 
   /* =========================================================
      CHAT
+     PROTECTED
   ========================================================= */
 
   function ChatPage() {
+
+    if (!user) {
+      return (
+        <Navigate
+          to="/login"
+          replace
+        />
+      );
+    }
 
     const chatInfo =
       location.state;
@@ -902,7 +957,8 @@ function AppContent() {
 
     if (
       lockedPartner &&
-      otherUser.uid !== lockedPartner.uid
+      otherUser.uid !==
+        lockedPartner.uid
     ) {
       return renderLocked();
     }
@@ -941,10 +997,21 @@ function AppContent() {
 
 
   /* =========================================================
-     OTHER PAGES
+     REVIEWS
+     PROTECTED
   ========================================================= */
 
   function ReviewsPage() {
+
+    if (!user) {
+      return (
+        <Navigate
+          to="/login"
+          replace
+        />
+      );
+    }
+
     return (
       <MyReviews
         currentUser={{
@@ -959,6 +1026,11 @@ function AppContent() {
   }
 
 
+  /* =========================================================
+     CREDITS
+     PUBLIC
+  ========================================================= */
+
   function CreditsPage() {
     return (
       <Credits
@@ -970,7 +1042,22 @@ function AppContent() {
   }
 
 
+  /* =========================================================
+     FEEDBACK
+     PROTECTED
+  ========================================================= */
+
   function FeedbackPage() {
+
+    if (!user) {
+      return (
+        <Navigate
+          to="/login"
+          replace
+        />
+      );
+    }
+
     return (
       <Feedback
         currentUser={{
@@ -1009,64 +1096,39 @@ function AppContent() {
 
 
   /* =========================================================
-     LOGIN
-  ========================================================= */
-
-  if (!user) {
-    return (
-      <Routes>
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to="/login"
-              replace
-            />
-          }
-        />
-      </Routes>
-    );
-  }
-
-
-  /* =========================================================
-     LOCKED USER
-  ========================================================= */
-
-  if (lockedPartner) {
-    const allowedPaths = [
-      "/",
-      "/chat",
-      "/feedback",
-    ];
-
-    if (
-      !allowedPaths.includes(
-        location.pathname
-      )
-    ) {
-      return renderLocked();
-    }
-  }
-
-
-  /* =========================================================
      ROUTES
   ========================================================= */
 
   return (
     <Routes>
 
+      {/* PUBLIC */}
       <Route
         path="/"
         element={<Home />}
       />
 
+      <Route
+        path="/credits"
+        element={<CreditsPage />}
+      />
+
+      <Route
+        path="/login"
+        element={
+          user ? (
+            <Navigate
+              to="/"
+              replace
+            />
+          ) : (
+            <Login />
+          )
+        }
+      />
+
+
+      {/* PROTECTED */}
       <Route
         path="/questionnaire"
         element={
@@ -1096,29 +1158,14 @@ function AppContent() {
       />
 
       <Route
-        path="/credits"
-        element={
-          <CreditsPage />
-        }
-      />
-
-      <Route
         path="/feedback"
         element={
           <FeedbackPage />
         }
       />
 
-      <Route
-        path="/login"
-        element={
-          <Navigate
-            to="/"
-            replace
-          />
-        }
-      />
 
+      {/* UNKNOWN URL */}
       <Route
         path="*"
         element={
@@ -1145,6 +1192,5 @@ function App() {
     </BrowserRouter>
   );
 }
-
 
 export default App;
