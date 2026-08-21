@@ -120,30 +120,28 @@ export function listenToConfirmStatus(currentUid, otherUid, callback) {
   };
 }
 
-// Is this specific user already locked into a confirmed roommate pair?
-// Returns the partner's uid, or null if not locked.
+// Is this specific user already locked into a confirmed roommate
+// pair? Reads directly from their OWN students/ doc — this is the
+// single source of truth (stamped by ensureRoommatePair above), not
+// the roommatePairs collection. Keeping only one place to check (and
+// one place to reset when testing) avoids the two getting out of sync.
 export async function getLockedPartnerUid(uid) {
-  const [asA, asB] = await Promise.all([
-    getDocs(query(collection(db, "roommatePairs"), where("uidA", "==", uid))),
-    getDocs(query(collection(db, "roommatePairs"), where("uidB", "==", uid))),
-  ]);
+  const snap = await getDoc(doc(db, "students", uid));
+  if (!snap.exists()) return null;
 
-  if (!asA.empty) return asA.docs[0].data().uidB;
-  if (!asB.empty) return asB.docs[0].data().uidA;
-  return null;
+  const data = snap.data();
+  return data.isLocked ? data.roommateUid || null : null;
 }
 
-// Every uid currently locked into a roommate pair, across everyone —
-// used to filter locked-in students out of everyone else's match pool.
-export async function getAllLockedUids() {
-  const snapshot = await getDocs(collection(db, "roommatePairs"));
-  const locked = new Set();
-
-  snapshot.docs.forEach((docSnap) => {
-    const data = docSnap.data();
-    locked.add(data.uidA);
-    locked.add(data.uidB);
+// Live version — updates instantly if lock status changes (e.g. an
+// admin clears it in the console) without needing a refresh.
+export function listenToLockedPartnerUid(uid, callback) {
+  return onSnapshot(doc(db, "students", uid), (snap) => {
+    if (!snap.exists()) {
+      callback(null);
+      return;
+    }
+    const data = snap.data();
+    callback(data.isLocked ? data.roommateUid || null : null);
   });
-
-  return locked;
 }
